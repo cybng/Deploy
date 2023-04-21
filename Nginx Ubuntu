@@ -1,0 +1,72 @@
+sudo mkdir -p /var/www/example.com/html
+sudo chown -R $USER:$USER /var/www/example.com/html
+sudo chmod -R 755 /var/www
+nano /var/www/example.com/html/index.html   // and write html code
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/example.com
+
+-------
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+------
+
+sudo nano /etc/nginx/nginx.conf
+server_names_hash_bucket_size 64;
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+
+
+
+================================
+
+React Nginx
+
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/main/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name workitspace.com www.workitspace.com;
+
+        location / {
+               try_files $uri $uri/ /index.html;
+        }
+}
+
+================================
+
+Node js Deploy Nginx
+
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/api;
+        #index index.html index.htm index.nginx-debian.html;
+
+        server_name api.workitspace.com  api.workitspace.com;
+
+        location / {
+                proxy_pass http://localhost:9000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        }
+}
